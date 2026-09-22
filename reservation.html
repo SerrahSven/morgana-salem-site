@@ -47,7 +47,7 @@
     <div class="wrap">
       <p class="eyebrow">Réservation</p>
       <h1>Demander un rendez-vous</h1>
-      <p class="content-narrow" style="color:var(--text-muted);">Ce formulaire envoie une <strong>demande</strong> de rendez-vous, pas une réservation instantanée : Morgana Salem la confirme par retour d'email ou de téléphone sous 24 à 48h, en fonction de ses disponibilités réelles.</p>
+      <p class="content-narrow" style="color:var(--text-muted);">Trois étapes : envoyez votre demande, réglez votre consultation via PayPal, puis confirmez le paiement par WhatsApp. Le créneau n'est définitivement bloqué qu'une fois cette confirmation reçue — en cas d'indisponibilité de dernière minute, Morgana Salem vous recontacte pour un autre horaire.</p>
     </div>
   </section>
 
@@ -118,6 +118,15 @@
               </div>
               <button type="submit" class="btn btn-primary">Envoyer ma demande de rendez-vous</button>
               <p class="form-status" id="booking-status"></p>
+
+              <div class="payment-block" id="payment-block" hidden>
+                <h3 style="font-size:1.05rem;">Étape suivante : réglez et confirmez</h3>
+                <p class="hint" style="margin-bottom:14px;">Le créneau n'est définitivement bloqué qu'après réception de votre confirmation ci-dessous.</p>
+                <div class="stacked-actions">
+                  <a class="btn btn-primary" id="paypal-link" href="#" target="_blank" rel="noopener">Régler <span id="paypal-amount"></span> sur PayPal</a>
+                  <a class="btn btn-ghost" id="whatsapp-confirm-link" href="#" target="_blank" rel="noopener">Confirmer le paiement par WhatsApp</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -4,9 +4,12 @@
    chaque fonction vérifie la présence de ses éléments avant d'agir.
    ========================================================================== */
 
-/* Adresse de contact utilisée pour les demandes de rendez-vous et les avis.
-   À REMPLACER par la véritable adresse professionnelle avant mise en ligne. */
-const CONTACT_EMAIL = "contact@morgana-salem.fr";
+/* Adresse de contact utilisée pour les demandes de rendez-vous et les avis. */
+const CONTACT_EMAIL = "morgana.salem.witch@gmail.com";
+/* Numéro WhatsApp de Morgana Salem, format international sans "+" ni espaces (wa.me). */
+const WHATSAPP_NUMBER = "33622270609";
+/* Email du compte PayPal recevant les paiements. */
+const PAYPAL_EMAIL = "morgane.bataille@outlook.fr";
 
 document.addEventListener("DOMContentLoaded", () => {
   initFooterYear();
@@ -311,6 +314,9 @@ function initCalendar() {
   }
 
   function renderSummary() {
+    // Toute modification du créneau invalide une éventuelle étape de paiement déjà révélée.
+    const paymentBlock = document.querySelector("#payment-block");
+    if (paymentBlock) paymentBlock.hidden = true;
     if (!summary) return;
     const service = currentService();
     if (!service || !selectedDate || !selectedSlot) {
@@ -323,6 +329,36 @@ function initCalendar() {
     summary.querySelector("[data-sum-date]").textContent =
       capitalize(d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })) + ` à ${selectedSlot}`;
     summary.querySelector("[data-sum-duration]").textContent = service.duration;
+  }
+
+  function revealPaymentStep({ service, dateLabel, name, phone }) {
+    const block = document.querySelector("#payment-block");
+    if (!block) return;
+    const amount = (service.price.match(/\d+/) || ["0"])[0];
+    const paypalLink = document.querySelector("#paypal-link");
+    const paypalAmount = document.querySelector("#paypal-amount");
+    if (paypalLink) {
+      const params = new URLSearchParams({
+        cmd: "_xclick",
+        business: PAYPAL_EMAIL,
+        item_name: service.label,
+        amount: amount,
+        currency_code: "EUR",
+        no_shipping: "1",
+      });
+      paypalLink.href = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
+    }
+    if (paypalAmount) paypalAmount.textContent = service.price;
+    const waMessage = [
+      `Bonjour Morgana, je viens de régler ma consultation via PayPal.`,
+      `Prestation : ${service.label} (${service.price})`,
+      `Créneau : ${dateLabel} à ${selectedSlot}`,
+      `Nom : ${name}${phone ? " — Tél : " + phone : ""}`,
+      `Merci de confirmer mon rendez-vous !`,
+    ].join("\n");
+    const waLink = document.querySelector("#whatsapp-confirm-link");
+    if (waLink) waLink.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
+    block.hidden = false;
   }
 
   prevBtn?.addEventListener("click", () => { viewDate.setMonth(viewDate.getMonth() - 1); renderMonth(); });
@@ -370,7 +406,8 @@ function initCalendar() {
 
     const href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
     window.location.href = href;
-    showStatus(statusEl, "ok", "Votre messagerie va s’ouvrir avec votre demande pré-remplie. Envoyez le message : Morgana vous confirmera ce créneau par retour sous 24 à 48 h.");
+    showStatus(statusEl, "ok", "Votre messagerie va s’ouvrir avec votre demande pré-remplie. Envoyez-la, puis réglez et confirmez ci-dessous pour bloquer définitivement votre créneau.");
+    revealPaymentStep({ service, dateLabel, name, phone });
   });
 
   toggleBookingMode();

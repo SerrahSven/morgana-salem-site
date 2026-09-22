@@ -371,6 +371,9 @@ legend { font-weight: 600; padding: 0 8px; font-family: var(--font-display); fon
 .booking-summary dt { color: var(--text-muted); }
 .booking-summary dd { margin: 0; font-weight: 500; }
 
+.payment-block { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.stacked-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+
 /* --------------------------------------------------------------------------
    8. Reviews
    -------------------------------------------------------------------------- */
