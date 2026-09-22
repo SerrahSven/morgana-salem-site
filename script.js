@@ -11,6 +11,29 @@ const WHATSAPP_NUMBER = "33622270609";
 /* Email du compte PayPal recevant les paiements. */
 const PAYPAL_EMAIL = "morgane.bataille@outlook.fr";
 
+/*
+ * Notification WhatsApp AUTOMATIQUE (sans action du client) via CallMeBot,
+ * un service gratuit tiers : https://www.callmebot.com/blog/free-api-whatsapp-messages/
+ * PROVISOIRE tant que CALLMEBOT_API_KEY est vide — aucune notification
+ * automatique ne part tant que la clé n'est pas configurée. Pour l'obtenir
+ * (à faire UNE SEULE FOIS, depuis le WhatsApp du +33 6 22 27 06 09) :
+ *   1. Ajouter le contact +34 644 59 71 67 dans WhatsApp.
+ *   2. Lui envoyer exactement : "I allow callmebot to send me messages"
+ *   3. CallMeBot répond avec une clé (ex. "Your APIKEY is 123456") : la
+ *      coller ci-dessous.
+ * Limite connue : cette clé est visible dans le code source du site (un
+ * site statique ne peut pas la cacher). Quelqu'un de malveillant pourrait
+ * l'utiliser pour spammer ce numéro WhatsApp précis — rien de plus grave,
+ * et une nouvelle clé se régénère en renvoyant le message d'activation.
+ */
+const CALLMEBOT_API_KEY = ""; // ⚠️ à compléter — voir instructions ci-dessus
+
+function notifyOwnerAutomatically(message) {
+  if (!CALLMEBOT_API_KEY) return; // pas encore configuré : aucun envoi
+  const url = `https://api.callmebot.com/whatsapp.php?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(message)}&apikey=${CALLMEBOT_API_KEY}`;
+  fetch(url, { mode: "no-cors" }).catch(() => { /* échec silencieux : notification best-effort, ne bloque jamais le parcours client */ });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initFooterYear();
   initNav();
@@ -407,6 +430,17 @@ function initCalendar() {
     const href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
     window.location.href = href;
     showStatus(statusEl, "ok", "Votre messagerie va s’ouvrir avec votre demande pré-remplie. Envoyez-la, puis réglez et confirmez ci-dessous pour bloquer définitivement votre créneau.");
+
+    notifyOwnerAutomatically(
+      `🔮 Nouvelle demande de rendez-vous\n` +
+      `Prestation : ${service.label} (${service.price})\n` +
+      `Créneau : ${dateLabel} à ${selectedSlot}\n` +
+      `Nom : ${name}\n` +
+      `Email : ${email}` +
+      (phone ? `\nTéléphone : ${phone}` : "") +
+      (message ? `\nMessage : ${message}` : "")
+    );
+
     revealPaymentStep({ service, dateLabel, name, phone });
   });
 
@@ -446,6 +480,14 @@ function initQuoteForm() {
     const href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
     window.location.href = href;
     showStatus(statusEl, "ok", "Votre messagerie va s’ouvrir avec votre demande pré-remplie. Morgana revient vers vous avec une proposition adaptée.");
+
+    notifyOwnerAutomatically(
+      `🔮 Nouvelle demande de devis (consultation sur mesure)\n` +
+      `Nom : ${name}\n` +
+      `Email : ${email}` +
+      (phone ? `\nTéléphone : ${phone}` : "") +
+      `\nDemande : ${message}`
+    );
   });
 }
 
