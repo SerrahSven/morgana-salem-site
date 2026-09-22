@@ -54,23 +54,37 @@
   <section class="section">
     <div class="wrap">
       <div id="review-list">
-        <div class="review-empty">
-          <svg class="glyph" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
-          <p><strong>Aucun avis publié pour le moment.</strong><br>Soyez la première personne à partager votre expérience.</p>
-        </div>
+        <article class="card" style="margin-bottom:16px;">
+          <div class="stars" aria-label="5 étoiles sur 5">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
+          </div>
+          <p>« Une lecture si poignante, Morgana dit les termes tout simplement, elle n'essaie pas de réconforter, elle m'a aidé à me retrouver et à me trouver une conduite plus droite pour mon avenir grâce à cette lecture. »</p>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">— Karmen, septembre 2026</p>
+        </article>
         <!--
-          Pour publier un avis reçu par email, dupliquez le bloc ci-dessous à
-          l'intérieur de #review-list, en remplacement ou à côté de
-          .review-empty (à retirer s'il ne doit plus s'afficher) :
+          Pour publier un nouvel avis reçu par email, dupliquez le bloc
+          ci-dessus à l'intérieur de #review-list :
 
           <article class="card" style="margin-bottom:16px;">
             <div class="stars" aria-label="5 étoiles sur 5">
               <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
-              <!-- répéter l'icône étoile selon la note -->
+              [répéter cette balise svg autant de fois que la note, ex. 5x pour 5 étoiles]
             </div>
             <p>« Texte de l'avis. »</p>
             <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">— Prénom, mois année</p>
           </article>
+
+          Si aucun avis n'est publié, remettez le bloc .review-empty
+          (supprimé ci-dessus car au moins un avis existe désormais) :
+
+          <div class="review-empty">
+            <svg class="glyph" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
+            <p><strong>Aucun avis publié pour le moment.</strong><br>Soyez la première personne à partager votre expérience.</p>
+          </div>
         -->
       </div>
     </div>
