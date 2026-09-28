@@ -47,45 +47,22 @@
     <div class="wrap">
       <p class="eyebrow">Avis</p>
       <h1>Avis des personnes consultées</h1>
-      <p class="content-narrow" style="color:var(--text-muted);">Chaque avis provient d'une personne ayant réellement consulté Morgana Salem. Il est envoyé pour relecture avant d'être publié ici — ce site n'affiche aucun avis fictif ni note achetée.</p>
+      <p class="content-narrow" style="color:var(--text-muted);">Chaque avis provient d'une personne ayant réellement consulté Morgana Salem, et passe par une relecture avant publication — ce site n'affiche aucun avis fictif ni note achetée.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap">
-      <div id="review-list">
-        <article class="card" style="margin-bottom:16px;">
-          <div class="stars" aria-label="5 étoiles sur 5">
-            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
-            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
-            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
-            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
-            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
-          </div>
-          <p>« Une lecture si poignante, Morgana dit les termes tout simplement, elle n'essaie pas de réconforter, elle m'a aidé à me retrouver et à me trouver une conduite plus droite pour mon avenir grâce à cette lecture. »</p>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">— Karmen, septembre 2026</p>
-        </article>
-        <!--
-          Pour publier un nouvel avis reçu par email, dupliquez le bloc
-          ci-dessus à l'intérieur de #review-list :
-
-          <article class="card" style="margin-bottom:16px;">
-            <div class="stars" aria-label="5 étoiles sur 5">
-              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
-              [répéter cette balise svg autant de fois que la note, ex. 5x pour 5 étoiles]
-            </div>
-            <p>« Texte de l'avis. »</p>
-            <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">— Prénom, mois année</p>
-          </article>
-
-          Si aucun avis n'est publié, remettez le bloc .review-empty
-          (supprimé ci-dessus car au moins un avis existe désormais) :
-
-          <div class="review-empty">
-            <svg class="glyph" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>
-            <p><strong>Aucun avis publié pour le moment.</strong><br>Soyez la première personne à partager votre expérience.</p>
-          </div>
-        -->
+      <div class="review-summary" id="review-summary" hidden>
+        <div class="review-score">
+          <span class="review-score-number" id="review-avg">–</span>
+          <div class="stars" id="review-avg-stars"></div>
+          <span class="review-count" id="review-count"></span>
+        </div>
+        <div class="review-distribution" id="review-distribution"></div>
+      </div>
+      <div id="review-list" aria-live="polite">
+        <p class="hint">Chargement des avis…</p>
       </div>
     </div>
   </section>
@@ -95,7 +72,7 @@
       <div class="section-head">
         <p class="eyebrow">Partager votre expérience</p>
         <h2>Laisser un avis</h2>
-        <p>Votre messagerie s'ouvrira avec votre avis pré-rempli, à envoyer à Morgana Salem. Après relecture, il est ajouté à cette page.</p>
+        <p>Votre avis est envoyé directement et publié ici après relecture par Morgana.</p>
       </div>
 
       <form id="review-form" novalidate class="content-narrow">

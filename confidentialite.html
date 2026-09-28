@@ -66,8 +66,9 @@
       <h2>2. Un site qui ne fait pas transiter vos données par un serveur</h2>
       <p>Ce site est une page statique : il n'y a pas de base de données ni de serveur qui reçoivent automatiquement ce que vous saisissez. Concrètement :</p>
       <ul>
-        <li>Les formulaires de <strong>demande de rendez-vous</strong>, de <strong>devis</strong> et d'<strong>avis</strong> préparent un email dans votre propre messagerie. Rien n'est envoyé tant que vous n'avez pas vous-même validé l'envoi de cet email.</li>
+        <li>Les formulaires de <strong>demande de rendez-vous</strong> et de <strong>devis</strong> préparent un email dans votre propre messagerie. Rien n'est envoyé tant que vous n'avez pas vous-même validé l'envoi de cet email.</li>
         <li>Une fois cet email envoyé, il est reçu directement dans la messagerie de Morgana Salem, qui en devient responsable du traitement au même titre que n'importe quel courrier électronique reçu.</li>
+        <li>Le formulaire d'<strong>avis</strong> fonctionne différemment : il envoie directement votre avis (nom, note, commentaire) à un service tiers, Airtable, qui sert d'espace de relecture avant publication — voir la section 5 ci-dessous.</li>
         <li>Le site mémorise uniquement, sur votre propre appareil (et non sur un serveur), votre choix en matière de cookies et votre préférence d'affichage (thème clair/sombre). Voir la <a href="cookies.html">politique de cookies</a>.</li>
       </ul>
 
@@ -82,7 +83,7 @@
             <tr><td>Paiement (PayPal)</td><td>Traité entièrement par PayPal — ce site ne collecte aucune donnée bancaire</td><td>Règlement de la prestation</td></tr>
             <tr><td>Confirmation (WhatsApp)</td><td>Nom, prestation, créneau, téléphone (via votre propre compte WhatsApp)</td><td>Confirmation du rendez-vous après paiement</td></tr>
             <tr><td>Demande de devis (consultation sur mesure)</td><td>Nom, email, téléphone (optionnel), description de la demande</td><td>Établir une proposition adaptée</td></tr>
-            <tr><td>Avis</td><td>Nom ou pseudonyme, note, commentaire</td><td>Publication d'un avis client après relecture</td></tr>
+            <tr><td>Avis</td><td>Nom ou pseudonyme, note, commentaire — stockés chez Airtable, un tiers, jusqu'à approbation ou suppression</td><td>Publication d'un avis client après relecture</td></tr>
             <tr><td>Préférences de navigation</td><td>Choix de cookies, thème clair/sombre</td><td>Mémoriser vos préférences sur cet appareil</td></tr>
           </tbody>
         </table>
@@ -93,6 +94,7 @@
 
       <h2>5. Destinataires</h2>
       <p>Les informations que vous envoyez par email ou WhatsApp ne sont destinées qu'à Morgana Salem. Elles ne sont ni vendues, ni cédées, ni utilisées à des fins commerciales tierces.</p>
+      <p>Les avis sont stockés chez <strong>Airtable</strong> (Airtable, Inc., États-Unis), qui héberge la liste des avis en attente et approuvés. Un avis en attente n'est visible que de Morgana (et techniquement du personnel d'Airtable, comme pour tout hébergeur) ; seuls les avis marqués « Approuvé » s'affichent publiquement sur cette page. Voir la politique de confidentialité d'Airtable : <a href="https://www.airtable.com/privacy" target="_blank" rel="noopener">airtable.com/privacy</a>.</p>
       <p>Si vous réglez une consultation, vous êtes redirigé·e vers PayPal : le paiement (coordonnées bancaires incluses) est traité directement par PayPal, qui agit comme responsable de traitement indépendant pour ces données — ce site n'y a jamais accès et ne les stocke pas. Voir la politique de confidentialité de PayPal : <a href="https://www.paypal.com/fr/webapps/mpp/ua/privacy-full" target="_blank" rel="noopener">paypal.com</a>. La confirmation du paiement par WhatsApp est transmise via WhatsApp/Meta, selon leurs propres conditions.</p>
 
       <h2>6. Durée de conservation</h2>

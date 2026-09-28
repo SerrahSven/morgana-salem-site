@@ -34,6 +34,24 @@ function notifyOwnerAutomatically(message) {
   fetch(url, { mode: "no-cors" }).catch(() => { /* échec silencieux : notification best-effort, ne bloque jamais le parcours client */ });
 }
 
+/*
+ * Système d'avis (type Trustpilot) — base Airtable "Morgana Salem — Avis".
+ * Un avis envoyé par un visiteur est créé avec Statut="En attente" ; il ne
+ * s'affiche publiquement qu'une fois son Statut changé en "Approuvé" par
+ * Morgana, directement dans l'interface Airtable (qui sert de tableau de
+ * modération — aucun panneau d'admin séparé n'est nécessaire).
+ * PROVISOIRE tant qu'AIRTABLE_TOKEN est vide : le formulaire refuse l'envoi
+ * et la page affiche un message d'indisponibilité au lieu des avis.
+ * Limite connue, comme pour CALLMEBOT_API_KEY : ce jeton est visible dans le
+ * code source du site. Il est volontairement scopé à cette seule base, en
+ * lecture/écriture d'enregistrements uniquement — au pire quelqu'un pourrait
+ * y écrire des avis indésirables (toujours filtrés par la relecture manuelle
+ * avant affichage) ou lire les avis en attente, jamais accéder à autre chose.
+ */
+const AIRTABLE_BASE_ID = "appji31Sa24MdiXzX";
+const AIRTABLE_TABLE_ID = "tblkqLhYyxfZvMh8f";
+const AIRTABLE_TOKEN = ""; // ⚠️ à compléter — jeton scopé à cette base (data.records:read + data.records:write)
+
 document.addEventListener("DOMContentLoaded", () => {
   initFooterYear();
   initNav();
@@ -42,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initCalendar();
   initReviewForm();
   initQuoteForm();
+  loadApprovedReviews();
 });
 
 /* --------------------------------------------------------------------------
@@ -518,25 +537,133 @@ function initReviewForm() {
     });
   });
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = form.querySelector("#avis-nom")?.value.trim();
     const comment = form.querySelector("#avis-commentaire")?.value.trim();
+    const submitBtn = form.querySelector("button[type='submit']");
 
     if (!name || !comment || !rating) {
       showStatus(statusEl, "error", "Merci d’indiquer votre nom, une note (en cliquant sur les étoiles) et votre commentaire.");
       return;
     }
+    if (!AIRTABLE_TOKEN) {
+      showStatus(statusEl, "error", "Le recueil d’avis n’est pas encore activé sur ce site. Merci de réessayer un peu plus tard.");
+      return;
+    }
 
-    const subject = `Nouvel avis (${rating}/5) — ${name}`;
-    const bodyLines = [`Note : ${rating}/5`, `Nom affiché : ${name}`, "", `Avis :\n${comment}`];
-    const href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
-    window.location.href = href;
-    showStatus(statusEl, "ok", "Merci ! Votre messagerie va s’ouvrir avec votre avis pré-rempli. Une fois envoyé, il sera ajouté à cette page après relecture.");
-    form.reset();
-    ratingButtons.forEach((b) => { b.classList.remove("lit"); b.setAttribute("aria-pressed", "false"); });
-    rating = 0;
+    submitBtn.disabled = true;
+    try {
+      const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ records: [{ fields: { Name: name, Note: rating, Commentaire: comment, Statut: "En attente" } }] }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      showStatus(statusEl, "ok", "Merci ! Votre avis a bien été envoyé et sera publié ici après relecture par Morgana.");
+      notifyOwnerAutomatically(`🔮 Nouvel avis à approuver (${rating}/5)\nNom : ${name}\nAvis : ${comment}`);
+      form.reset();
+      ratingButtons.forEach((b) => { b.classList.remove("lit"); b.setAttribute("aria-pressed", "false"); });
+      rating = 0;
+    } catch (err) {
+      showStatus(statusEl, "error", `Une erreur est survenue lors de l’envoi. Réessayez, ou écrivez directement à ${CONTACT_EMAIL}.`);
+    } finally {
+      submitBtn.disabled = false;
+    }
   });
+}
+
+/* --------------------------------------------------------------------------
+   Chargement et affichage des avis approuvés (page avis)
+   -------------------------------------------------------------------------- */
+async function loadApprovedReviews() {
+  const listEl = document.querySelector("#review-list");
+  if (!listEl) return;
+
+  if (!AIRTABLE_TOKEN) {
+    listEl.innerHTML = '<div class="review-empty"><p><strong>Les avis sont en cours de mise en service sur ce site.</strong><br>Revenez bientôt.</p></div>';
+    return;
+  }
+
+  try {
+    const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}?filterByFormula=${encodeURIComponent("{Statut}='Approuvé'")}`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const records = (data.records || []).sort((a, b) => new Date(b.createdTime) - new Date(a.createdTime));
+    renderReviews(records);
+  } catch (err) {
+    listEl.innerHTML = '<div class="review-empty"><p>Impossible de charger les avis pour le moment. Réessayez plus tard.</p></div>';
+  }
+}
+
+function renderReviews(records) {
+  const listEl = document.querySelector("#review-list");
+  const summaryEl = document.querySelector("#review-summary");
+  if (!listEl) return;
+
+  if (!records.length) {
+    if (summaryEl) summaryEl.hidden = true;
+    listEl.innerHTML =
+      '<div class="review-empty"><svg class="glyph" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg><p><strong>Aucun avis publié pour le moment.</strong><br>Soyez la première personne à partager votre expérience.</p></div>';
+    return;
+  }
+
+  const notes = records.map((r) => Number(r.fields.Note) || 0);
+  const avg = notes.reduce((a, b) => a + b, 0) / notes.length;
+  const counts = [0, 0, 0, 0, 0];
+  notes.forEach((n) => { if (n >= 1 && n <= 5) counts[n - 1]++; });
+
+  if (summaryEl) {
+    summaryEl.hidden = false;
+    const avgEl = document.querySelector("#review-avg");
+    const countEl = document.querySelector("#review-count");
+    const avgStarsEl = document.querySelector("#review-avg-stars");
+    if (avgEl) avgEl.textContent = avg.toFixed(1);
+    if (countEl) countEl.textContent = `${records.length} avis`;
+    if (avgStarsEl) avgStarsEl.innerHTML = starsMarkup(Math.round(avg));
+
+    const distEl = document.querySelector("#review-distribution");
+    if (distEl) {
+      distEl.innerHTML = "";
+      for (let star = 5; star >= 1; star--) {
+        const count = counts[star - 1];
+        const pct = records.length ? Math.round((count / records.length) * 100) : 0;
+        const row = document.createElement("div");
+        row.className = "dist-row";
+        row.innerHTML = `<span>${star} ★</span><span class="dist-bar"><span class="dist-bar-fill" style="width:${pct}%"></span></span><span>${count}</span>`;
+        distEl.appendChild(row);
+      }
+    }
+  }
+
+  listEl.innerHTML = "";
+  records.forEach((r) => {
+    const f = r.fields;
+    const note = Number(f.Note) || 0;
+    const date = new Date(r.createdTime);
+    const dateLabel = capitalize(date.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }));
+    const card = document.createElement("article");
+    card.className = "card";
+    card.style.marginBottom = "16px";
+    card.innerHTML =
+      `<div class="stars" aria-label="${note} étoiles sur 5">${starsMarkup(note)}</div>` +
+      `<p>« ${escapeHtml(f.Commentaire || "")} »</p>` +
+      `<p style="color:var(--text-muted); font-size:0.85rem; margin:0;">— ${escapeHtml(f.Name || "Anonyme")}, ${dateLabel}</p>`;
+    listEl.appendChild(card);
+  });
+}
+
+function starsMarkup(n) {
+  const star = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.472 5.008 5.528.803-4 3.9.944 5.506L10 14.25l-4.944 2.567L6 11.31l-4-3.9 5.528-.803Z"/></svg>';
+  return star.repeat(Math.max(0, Math.min(5, n)));
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 /* --------------------------------------------------------------------------

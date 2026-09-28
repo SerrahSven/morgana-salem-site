@@ -390,8 +390,16 @@ legend { font-weight: 600; padding: 0 8px; font-family: var(--font-display); fon
 }
 .review-empty .glyph { width: 40px; height: 40px; color: var(--accent); margin: 0 auto 14px; }
 
-.review-summary { display: flex; align-items: center; gap: 18px; margin-bottom: 28px; flex-wrap: wrap; }
-.review-summary .score { font-family: var(--font-display); font-size: 2.6rem; color: var(--accent); }
+.review-summary { display: flex; align-items: flex-start; gap: 40px; margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.review-score { text-align: center; min-width: 140px; }
+.review-score-number { display: block; font-family: var(--font-display); font-size: 3rem; line-height: 1; color: var(--accent); }
+.review-score .stars { justify-content: center; margin-top: 6px; }
+.review-count { display: block; margin-top: 8px; font-size: 0.82rem; color: var(--text-muted); }
+.review-distribution { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 7px; }
+.dist-row { display: grid; grid-template-columns: 40px 1fr 28px; align-items: center; gap: 10px; font-size: 0.8rem; color: var(--text-muted); }
+.dist-bar { height: 8px; background: var(--bg-sunken); border-radius: 999px; overflow: hidden; }
+.dist-bar-fill { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+@media (max-width: 640px) { .review-summary { gap: 20px; } }
 
 /* --------------------------------------------------------------------------
    9. Footer
