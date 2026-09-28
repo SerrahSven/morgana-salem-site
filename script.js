@@ -52,6 +52,32 @@ const AIRTABLE_BASE_ID = "appji31Sa24MdiXzX";
 const AIRTABLE_TABLE_ID = "tblkqLhYyxfZvMh8f";
 const AIRTABLE_TOKEN = ""; // ⚠️ à compléter — jeton scopé à cette base (data.records:read + data.records:write)
 
+/*
+ * Avis de secours affichés tant qu'AIRTABLE_TOKEN est vide — deux avis
+ * réels, reçus et validés par Morgana, en attendant la bascule vers
+ * Airtable. À SUPPRIMER (vider le tableau) une fois AIRTABLE_TOKEN
+ * renseigné et ces mêmes avis recréés comme enregistrements Airtable
+ * approuvés, pour ne pas les afficher deux fois.
+ */
+const FALLBACK_REVIEWS = [
+  {
+    createdTime: "2026-09-20T10:00:00.000Z",
+    fields: {
+      Name: "Karmen",
+      Note: 5,
+      Commentaire: "Une lecture si poignante, Morgana dit les termes tout simplement, elle n'essaie pas de réconforter, elle m'a aidé à me retrouver et à me trouver une conduite plus droite pour mon avenir grâce à cette lecture.",
+    },
+  },
+  {
+    createdTime: "2026-09-28T10:00:00.000Z",
+    fields: {
+      Name: "Carmen",
+      Note: 5,
+      Commentaire: "Je me suis sentie guidée tout du long. Morgana a réussi à m'orienter. Je ne sais pas encore si je peux suivre Morgana, mais j'ai l'impression que c'est la personne qu'il me faut.",
+    },
+  },
+];
+
 document.addEventListener("DOMContentLoaded", () => {
   initFooterYear();
   initNav();
@@ -582,7 +608,11 @@ async function loadApprovedReviews() {
   if (!listEl) return;
 
   if (!AIRTABLE_TOKEN) {
-    listEl.innerHTML = '<div class="review-empty"><p><strong>Les avis sont en cours de mise en service sur ce site.</strong><br>Revenez bientôt.</p></div>';
+    if (FALLBACK_REVIEWS.length) {
+      renderReviews([...FALLBACK_REVIEWS].sort((a, b) => new Date(b.createdTime) - new Date(a.createdTime)));
+    } else {
+      listEl.innerHTML = '<div class="review-empty"><p><strong>Les avis sont en cours de mise en service sur ce site.</strong><br>Revenez bientôt.</p></div>';
+    }
     return;
   }
 
